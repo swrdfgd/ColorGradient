@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Gradient Generator</title>
+    <style>
+        /* Cołone Theme Responsive CSS */
+        :root {
+            --bg-color: #121212;
+            --text-color: #f0f0f0;
+            --accent-color: #6366f1;
+            --card-bg: #1e1e1e;
+            --border-radius: 12px;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow-y: hidden; /* Mencegah scroll vertikal jika memungkinkan */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Controls Section */
+        .controls {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 22px;
+        }
+
+        label {
+            font-size: 15px;
+            margin-right: 10px;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            font-size: 15px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background-color: #2a2a2a;
+            color: var(--text-color);
+            width: 70px;
+            text-align: center;
+        }
+
+        button.large {
+            padding: 8px 20px;
+            font-size: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+        }
+
+        button.large:hover {
+            background-color: #4f46e5;
+        }
+
+        #message-box {
+            color: #ef4444;
+            margin-top: 5px;
+            font-weight: 600;
+            min-height: 20px;
+            font-size: 14px;
+        }
+
+        /* Gradient Display Area */
+        #gradient-display {
+            width: 100%;
+            height: 35vh; /* Proporsi yang cukup untuk gradien */
+            min-height: 150px; 
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            transition: background 0.5s ease-in-out;
+            background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+            border: 1px solid #333;
+            flex-shrink: 0;
+        }
+
+        /* Base Colors Scrollable Area */
+        .base-colors-header {
+            font-size: 16px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            flex-shrink: 0;
+        }
+
+        .scrollable-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 5px 5px 15px 5px;
+            scroll-behavior: smooth;
+            flex-grow: 1;
+            align-items: flex-start;
+        }
+
+        /* Custom Scrollbar */
+        .scrollable-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        /* Color Cards (Warna base berisi teks di tengah) */
+        .color-card {
+            flex: 0 0 auto;
+            width: 140px;
+            height: 100px;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            padding: 5px;
+            box-sizing: border-box;
+            
+            /* Font Putih, Border Hitam dengan Text Shadow */
+            color: #ffffff;
+            text-shadow: 
+                -1px -1px 0 #000,  
+                 1px -1px 0 #000,
+                -1px  1px 0 #000,
+                 1px  1px 0 #000,
+                 0px  0px 4px rgba(0,0,0,0.8);
+        }
+
+        .color-hex {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .color-name {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Controls Section -->
+        <div class="controls">
+            <h2>Color Gradient Generator</h2>
+            <label for="quantity">How many colors as base? :</label>
+            <input id="quantity" name="quantity" type="number" value="2" min="1" /> 
+            <button class="button large" id="generateangka" style="visibility: hidden;">Generate</button>
+            <div id="message-box"></div>
+        </div>
+
+        <!-- Gradient Display (Top) -->
+        <div id="gradient-display"></div>
+
+        <!-- Scrollable Base Colors (Bottom) -->
+        <div class="base-colors-header">Base Color(s)</div>
+        <div id="base-colors-container" class="scrollable-container">
+            <!-- Dinamis -->
+        </div>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/gh/swrdfgd/Random-Link/psudo.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/swrdfgd/Random-Link/ntcv2.js"></script>
+
+    <script>
+        function ucFirstAllWords(str) {
+            var pieces = str.split(" ");
+            for (var i = 0; i < pieces.length; i++) {
+                var j = pieces[i].charAt(0).toUpperCase();
+                pieces[i] = j + pieces[i].substr(1);
+            }
+            str = pieces.join(" ");
+            pieces = str.split("-");
+            for (var i = 0; i < pieces.length; i++) {
+                var j = pieces[i].charAt(0).toUpperCase();
+                pieces[i] = j + pieces[i].substr(1);
+            }
+            str = pieces.join("-");
+            pieces = str.split("(");
+            for (var i = 0; i < pieces.length; i++) {
+                var j = pieces[i].charAt(0).toUpperCase();
+                pieces[i] = j + pieces[i].substr(1);
+            }
+            return pieces.join("(");
+        }
+
+        var nolsampaief = '0123456789ABCDEF';
+        var simpenan = [Math.ceil(Math.random()*1000000000)];
+        var kunciapi = ['"da3d09f1-4168-4c4b-9bb7-07fc36cde692"','"10b51f99-394e-472a-88ed-7388d51deb36"','"b027deb6-a127-4313-9626-9497ad8e48b0"','"b70ccad6-a737-477e-9938-e56a8c8e9539"','"a3d088f5-1550-4ff4-a35a-5a45d37dbdca"'];
+
+        $(document).ready(function(){$.ajax({
+                url: "https://api.random.org/json-rpc/1/invoke",
+                type:"POST",
+                data: `{
+                    "jsonrpc": "2.0",
+                    "method": "generateIntegers",
+                    "params": {
+                        "apiKey": `+kunciapi[Math.floor(Math.random()*kunciapi.length)]+`,
+                        "n": 100,
+                        "min": 1,
+                        "max": 1000000000,
+                        "replacement": true,
+                        "base": 10
+                    },
+                    "id": 2601
+                }`,
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function(result){
+                    if(result && result.result && result.result.random) {
+                        simpenan = simpenan.concat(result.result.random.data);
+                    }
+                    document.getElementById("generateangka").style.visibility = 'visible';
+                },
+                error: function() {
+                    document.getElementById("generateangka").style.visibility = 'visible';
+                }
+            }); 
+            
+            $("#generateangka").click(function() {
+                let msgBox = document.getElementById("message-box");
+                msgBox.innerHTML = '';
+                
+                let iput = Number(document.getElementById("quantity").value);
+
+                if (isNaN(iput) || document.getElementById("quantity").value === '') {
+                    msgBox.innerHTML = 'Please input a number.';
+                    return;
+                }
+                else if((iput % 1 != 0) || (iput <= 0)){
+                    msgBox.innerHTML = 'Please input a positive integer.';
+                    return;
+                }
+                
+                let colorContainer = document.getElementById('base-colors-container');
+                colorContainer.innerHTML = '';
+                
+                let generatedColorsArray = [];
+
+                for (let urutanWarna = 1; urutanWarna <= iput; ++urutanWarna) {
+                    let warnarandd = '#';
+                    for (var i = 0; i < 6; ++i) {
+                        let pilihansimpenan = Math.floor(Math.random()*simpenan.length);
+                        warnarandd += nolsampaief.charAt(simpenan[pilihansimpenan]%16);
+                        
+                        if (typeof psudo === "function") {
+                            simpenan[pilihansimpenan] = psudo(simpenan, pilihansimpenan);
+                        } else {
+                            simpenan[pilihansimpenan] = Math.ceil(Math.random() * 1000000000); 
+                        }
+                    }
+                    
+                    generatedColorsArray.push(warnarandd);
+                    
+                    let colorName = "Unknown";
+                    if (typeof ntc !== "undefined") {
+                        colorName = ucFirstAllWords(ntc.name(warnarandd)[1]);
+                    }
+
+                    // Card base color berisi teks yang terpusat dengan efek border shadow
+                    let cardHTML = `
+                        <div class="color-card" style="background-color: ${warnarandd};">
+                            <div class="color-hex">${warnarandd}</div>
+                            <div class="color-name">${colorName}</div>
+                        </div>
+                    `;
+                    colorContainer.innerHTML += cardHTML;
+                }
+                
+                const gradientTypes = ['linear-gradient', 'radial-gradient', 'conic-gradient'];
+                const selectedGradientType = gradientTypes[Math.floor(Math.random() * gradientTypes.length)];
+                
+                let finalBackground = '';
+
+                if(generatedColorsArray.length === 1) {
+                    finalBackground = generatedColorsArray[0]; 
+                } else {
+                    // Random X & Y for center point (0% - 100%)
+                    let randX = Math.floor(Math.random() * 101);
+                    let randY = Math.floor(Math.random() * 101);
+
+                    if(selectedGradientType === 'linear-gradient') {
+                        let randomAngle = Math.floor(Math.random() * 360);
+                        finalBackground = `linear-gradient(${randomAngle}deg, ${generatedColorsArray.join(', ')})`;
+                    } else if (selectedGradientType === 'radial-gradient') {
+                        finalBackground = `radial-gradient(circle at ${randX}% ${randY}%, ${generatedColorsArray.join(', ')})`;
+                    } else if (selectedGradientType === 'conic-gradient') {
+                        let randomAngle = Math.floor(Math.random() * 360);
+                        let conicColors = [...generatedColorsArray];
+                        
+                        if (Math.random() < 0.5) {
+                            conicColors.push(conicColors[0]);
+                        }
+                        
+                        finalBackground = `conic-gradient(from ${randomAngle}deg at ${randX}% ${randY}%, ${conicColors.join(', ')})`;
+                    }
+                }
+                
+                document.getElementById('gradient-display').style.background = finalBackground;
+            });
+        });
+    </script>
+</body>
+</html>
